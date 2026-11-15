@@ -1,0 +1,44 @@
+# Environment Variables & Secrets (NEVER COMMIT)
+.env
+.env*
+!.gitignore
+
+# SQL Migrations & Database Scripts in root
+*.sql
+/supabase/
+
+# Raw Design Assets in root
+/assets/
+
+# Local data cache in root
+/data/
+
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+
+# Next.js build outputs
+/.next/
+/out/
+/build
+
+# Misc & OS files
+.DS_Store
+Thumbs.db
+*.pem
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local deployment tooling
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
