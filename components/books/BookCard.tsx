@@ -3,17 +3,22 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Book } from "@/types";
 import { formatINR } from "@/lib/utils";
 import { Printer, ShoppingBag } from "lucide-react";
 import { useCart } from "@/components/cart/CartContext";
+import { useAuth } from "@/components/auth/AuthContext";
+import { toast } from "sonner";
 
 interface BookCardProps {
   book: Book;
 }
 
 export function BookCard({ book }: BookCardProps) {
+  const router = useRouter();
   const { addItem } = useCart();
+  const { user } = useAuth();
   const bookUrl = `/books/${encodeURIComponent(book.slug || book.id)}`;
 
   return (
@@ -72,6 +77,11 @@ export function BookCard({ book }: BookCardProps) {
             type="button"
             onClick={(e) => {
               e.preventDefault();
+              if (!user) {
+                toast.info("Please sign in to add books to your cart");
+                router.push(`/login?redirect=${encodeURIComponent(bookUrl)}`);
+                return;
+              }
               addItem(book, 1);
             }}
             aria-label={`Add ${book.title} to cart`}

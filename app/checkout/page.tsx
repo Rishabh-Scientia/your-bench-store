@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/browser";
+import { useAuth } from "@/components/auth/AuthContext";
 
 function loadRazorpayScript(): Promise<boolean> {
   return new Promise((resolve) => {
@@ -31,6 +32,7 @@ function loadRazorpayScript(): Promise<boolean> {
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const { items, subtotal, clearCart } = useCart();
   const [shippingRate, setShippingRate] = useState<number>(49);
   const [freeThreshold, setFreeThreshold] = useState<number>(599);
@@ -46,6 +48,19 @@ export default function CheckoutPage() {
     state: "",
     pincode: "",
   });
+
+  // Gating & pre-fill customer info
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/login?redirect=/checkout&message=Please sign in to proceed with checkout.");
+    } else if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        fullName: prev.fullName || user.user_metadata?.full_name || "",
+        email: prev.email || user.email || "",
+      }));
+    }
+  }, [user, authLoading, router]);
 
   useEffect(() => {
     async function loadSettings() {
@@ -180,6 +195,7 @@ export default function CheckoutPage() {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
+                userId: user?.id,
                 customer: {
                   fullName: formData.fullName,
                   email: formData.email,

@@ -3,6 +3,7 @@ import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CartProvider } from "@/components/cart/CartContext";
+import { AuthProvider } from "@/components/auth/AuthContext";
 import { Toaster } from "sonner";
 
 const siteUrl =
@@ -105,20 +106,22 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans min-h-screen flex flex-col bg-background text-text">
-        <CartProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <Toaster
-            position="top-right"
-            richColors
-            toastOptions={{
-              style: {
-                borderRadius: "0.75rem",
-              },
-            }}
-          />
-        </CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <Toaster
+              position="top-right"
+              richColors
+              toastOptions={{
+                style: {
+                  borderRadius: "0.75rem",
+                },
+              }}
+            />
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

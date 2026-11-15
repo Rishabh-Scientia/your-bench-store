@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
       subtotal,
       shippingFee,
       totalAmount,
+      userId,
     } = await req.json();
 
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
@@ -74,7 +75,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 4. Insert into public.orders table
-    const orderPayload = {
+    const orderPayload: any = {
       id: ybOrderId,
       customer_name: customer.fullName,
       customer_phone: customer.phone,
@@ -90,9 +91,21 @@ export async function POST(req: NextRequest) {
       notes: "Printed on order. Hand over to India Post Speed Post.",
     };
 
-    const { error: orderError } = await supabase
+    if (userId) {
+      orderPayload.user_id = userId;
+    }
+
+    let { error: orderError } = await supabase
       .from("orders")
       .insert(orderPayload);
+
+    // If insertion failed because user_id column doesn't exist yet, retry without user_id
+    if (orderError && orderPayload.user_id) {
+      console.warn("Retrying order insert without user_id:", orderError.message);
+      delete orderPayload.user_id;
+      const retryResult = await supabase.from("orders").insert(orderPayload);
+      orderError = retryResult.error;
+    }
 
     if (orderError) {
       console.error("Failed to insert order into Supabase:", orderError);
