@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/browser";
-import { Lock, Mail, Eye, EyeOff, ArrowLeft, ShieldAlert, Sparkles } from "lucide-react";
+import { Lock, Mail, Eye, EyeOff, ArrowLeft, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 
 function LoginForm() {
@@ -43,13 +43,6 @@ function LoginForm() {
       setError("An unexpected error occurred. Please check your credentials.");
       setLoading(false);
     }
-  };
-
-  const handleDemoAccess = () => {
-    document.cookie = "yb_admin_demo=true; path=/; max-age=86400; SameSite=Lax";
-    toast.success("Demo admin session active. Welcome to YourBench Store Admin!");
-    router.push("/admin");
-    router.refresh();
   };
 
   return (
@@ -137,40 +130,14 @@ function LoginForm() {
           </button>
         </form>
 
-        {/* Demo / Quick Test Button */}
-        <div className="mt-4 pt-4 hairline-t">
-          <button
-            type="button"
-            onClick={handleDemoAccess}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-surface hairline-border px-4 py-2.5 text-xs font-semibold text-text hover:bg-primary-soft hover:text-primary transition-colors"
+        <div className="mt-6 pt-5 hairline-t text-center">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-xs text-muted hover:text-primary transition-colors"
           >
-            <Sparkles className="w-3.5 h-3.5 text-primary" />
-            <span>Instant Demo Preview (Explore Admin Console)</span>
-          </button>
-        </div>
-
-        <div className="mt-6 pt-5 hairline-t text-center text-xs text-muted space-y-2">
-          <p>
-            Create an admin account in your{" "}
-            <a
-              href="https://supabase.com/dashboard"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary font-medium hover:underline"
-            >
-              Supabase Auth Dashboard
-            </a>{" "}
-            and add the email to the <code className="bg-surface px-1.5 py-0.5 rounded text-[11px]">admins</code> table.
-          </p>
-          <div>
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1.5 text-xs text-muted hover:text-primary transition-colors"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back to Storefront</span>
-            </Link>
-          </div>
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Back to Storefront</span>
+          </Link>
         </div>
       </div>
     </div>
