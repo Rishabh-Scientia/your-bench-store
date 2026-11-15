@@ -212,9 +212,25 @@ export default function CheckoutPage() {
 
             if (verifyData.success) {
               clearCart();
+
+              try {
+                // Save order details to local device storage for instant "Your Orders" access
+                const existing = JSON.parse(
+                  localStorage.getItem("yb_customer_orders") || "[]"
+                );
+                if (!existing.includes(verifyData.orderId)) {
+                  existing.unshift(verifyData.orderId);
+                  localStorage.setItem("yb_customer_orders", JSON.stringify(existing));
+                }
+                localStorage.setItem("yb_customer_phone", formData.phone.trim());
+                localStorage.setItem("yb_customer_email", formData.email.trim());
+              } catch (e) {
+                // LocalStorage fail-safe
+              }
+
               toast.dismiss();
               toast.success("Payment verified! Order placed successfully.");
-              router.push(`/track?orderId=${verifyData.orderId}`);
+              router.push(`/orders`);
             } else {
               toast.dismiss();
               toast.error(

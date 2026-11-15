@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { ShoppingBag, Menu, X, ArrowRight } from "lucide-react";
+import { ShoppingBag, Menu, X, ArrowRight, Package } from "lucide-react";
 import { useCart } from "@/components/cart/CartContext";
 
 export function Navbar() {
@@ -30,8 +30,9 @@ export function Navbar() {
 
   const navLinks = [
     { label: "Books", href: "/books" },
+    { label: "Your Orders", href: "/orders" },
+    { label: "Track Speed Post", href: "/track" },
     { label: "About", href: "/about" },
-    { label: "Track Order", href: "/track" },
   ];
 
   return (
@@ -58,7 +59,7 @@ export function Navbar() {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-7">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
@@ -75,8 +76,17 @@ export function Navbar() {
             })}
           </nav>
 
-          {/* Right side: Cart + Mobile Toggle */}
-          <div className="flex items-center gap-3 sm:gap-4">
+          {/* Right side: Your Orders + Cart + Mobile Toggle */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link
+              href="/orders"
+              title="Your Orders"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-text hover:text-primary hover:bg-surface hairline-border transition-all"
+            >
+              <Package className="w-3.5 h-3.5 text-primary" />
+              <span>Orders</span>
+            </Link>
+
             <Link
               href="/cart"
               aria-label="Shopping Cart"
@@ -146,7 +156,14 @@ export function Navbar() {
                 ))}
               </div>
             </div>
-            <div className="pt-6 hairline-t">
+            <div className="pt-6 hairline-t space-y-2">
+              <Link
+                href="/orders"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-surface hairline-border px-4 py-2.5 text-sm font-semibold text-text hover:bg-white transition-colors"
+              >
+                <Package className="w-4 h-4 text-primary" />
+                <span>Your Orders</span>
+              </Link>
               <Link
                 href="/cart"
                 className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-primary-hover transition-colors"
