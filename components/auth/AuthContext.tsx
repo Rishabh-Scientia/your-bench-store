@@ -39,6 +39,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(currentSession?.user ?? null);
     } catch (e) {
       console.error("Auth check error:", e);
+      setUser(null);
+      setSession(null);
     } finally {
       setLoading(false);
     }
@@ -47,16 +49,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     fetchSessionAndUser();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, newSession) => {
-        setSession(newSession);
-        setUser(newSession?.user ?? null);
-        setLoading(false);
-      }
-    );
+    let subscription: { unsubscribe: () => void } | null = null;
+    try {
+      const { data } = supabase.auth.onAuthStateChange(
+        (_event, newSession) => {
+          setSession(newSession);
+          setUser(newSession?.user ?? null);
+          setLoading(false);
+        }
+      );
+      subscription = data.subscription;
+    } catch (e) {
+      console.error("Auth state listener error:", e);
+      setLoading(false);
+    }
 
     return () => {
-      subscription.unsubscribe();
+      subscription?.unsubscribe();
     };
   }, []);
 
